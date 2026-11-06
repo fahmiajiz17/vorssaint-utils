@@ -21,6 +21,9 @@ More reliable window switching, audio, notifications and display controls, with 
 - Keep Awake and Quick Snippet Menu shortcuts can be cleared without disabling their features, remain cleared after restarts and backup imports, and check conflicts when reset. Thanks to @maxmeis.
 - Clipboard history remembers the list window's position after moves and resizes, keeping it visible when displays change. Thanks to @maxmeis.
 
+### Added
+- Trackpad edges: slide along the trackpad's edges to change volume, display or keyboard brightness and microphone level, swipe the bottom edge to skip tracks, and double-tap corners to mute the microphone or sound, control playback, close, minimize, fill, hide or quit the front window and app, open Mission Control and more. Steps tick with haptic feedback, edges can require a tap before sliding so resting a finger there changes nothing, the pointer stays still while sliding, and changes appear in the Dynamic Island or the macOS overlay.
+
 ### Fixed
 - The window switcher opens and switches more efficiently, reduces flashes when restoring minimized windows and cancels outdated activation requests after a newer selection. Thanks to @zhanghao87.
 - The window switcher keeps its opening shortcuts working during secure input, including All windows and quick modifier releases. Q/W remain unavailable in this mode and are blocked while the switcher owns the selection. Thanks to @phatina.

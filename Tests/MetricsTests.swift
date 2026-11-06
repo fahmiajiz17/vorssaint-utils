@@ -221,6 +221,7 @@ struct MetricsTests {
                 DockPreviewFrameRestorationTests.run(suite)
             }),
             ("spaces-order", { SpacesOrderTests.run(suite) }),
+            ("trackpad-edges", { TrackpadEdgeTests.run(suite) }),
             ("switcher", {
                 SwitcherHoverSelectionTests.run(suite)
                 SwitcherAllWindowsTests.run(suite)
