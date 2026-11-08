@@ -126,6 +126,7 @@ Reorder or hide panel sections, choose a compact layout, and export settings to 
 - **Smooth scrolling.** Give your mouse wheel a fluid glide with adjustable speed and response.
 - **Pointer acceleration.** Disable mouse acceleration and restore your previous setting when turned off.
 - **Linear scrolling.** Make every mouse wheel notch scroll the same number of lines, however fast the wheel spins.
+- **Fast scrolling.** Hold Option while scrolling the mouse wheel or trackpad to move through long pages several times faster.
 - **Focus follows mouse.** Bring the window under the pointer forward after an adjustable pause.
 - **Scroll direction.** Invert vertical and horizontal mouse scrolling independently of the trackpad.
 - **Scroll sideways while holding a key.** Turn vertical wheel movement into horizontal scrolling while holding a chosen key.
@@ -133,6 +134,7 @@ Reorder or hide panel sections, choose a compact layout, and export settings to 
 - **Mouse button shortcuts.** Assign keys to extra buttons and side wheels, or use button-drag gestures for Spaces and Mission Control.
 - **Middle click.** Turn a three-finger trackpad press into a middle click.
 - **Trackpad edges.** Slide along the trackpad's edges for volume and brightness, and double-tap its corners to mute the sound or the microphone or to close, minimize, fill or quit the front window and app, with haptic feedback and an optional tap before sliding so edges never change by accident.
+- **Trackpad gestures.** Swipe sideways with three fingers to switch apps like on Windows, and hold two fingers at the trackpad's edge to keep scrolling.
 - **Apps to leave alone.** Exclude chosen apps from mouse enhancements.
 - **Extra click filter.** Ignore accidental rapid clicks from worn mouse buttons without delaying normal clicks.
 - **Key debounce.** Filter repeated letters caused by a worn keyboard.

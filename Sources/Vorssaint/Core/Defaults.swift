@@ -160,6 +160,26 @@ enum DefaultsKey {
     static let trackpadEdgeFreezeCursor = "trackpadEdgeFreezeCursor"
     static let trackpadEdgeModifier = "trackpadEdgeModifier"
     static let trackpadEdgeTapToSlide = "trackpadEdgeTapToSlide"
+    static let trackpadAppSwipeEnabled = "trackpadAppSwipeEnabled"
+    static let trackpadAppSwipeFingers = "trackpadAppSwipeFingers"
+    static let trackpadAppSwipeStepDistance = "trackpadAppSwipeStepDistance"
+    static let trackpadAppSwipeExclusive = "trackpadAppSwipeExclusive"
+    static let trackpadAppSwipeReversed = "trackpadAppSwipeReversed"
+    static let trackpadAppSwipeHaptics = "trackpadAppSwipeHaptics"
+    static let trackpadAppSwipeEngageDistance = "trackpadAppSwipeEngageDistance"
+    static let trackpadEdgeScrollEnabled = "trackpadEdgeScrollEnabled"
+    static let trackpadEdgeScrollZone = "trackpadEdgeScrollZone"
+    static let trackpadEdgeScrollSpeed = "trackpadEdgeScrollSpeed"
+    static let trackpadEdgeScrollAccelerates = "trackpadEdgeScrollAccelerates"
+    static let trackpadEdgeScrollHorizontal = "trackpadEdgeScrollHorizontal"
+    static let switcherSwipeFollowsFingers = "switcherSwipeFollowsFingers"
+    static let switcherSwipeVertical = "switcherSwipeVertical"
+    static let switcherSwipeStaysInRow = "switcherSwipeStaysInRow"
+    static let fastScrollEnabled = "fastScrollEnabled"
+    static let fastScrollModifier = "fastScrollModifier"
+    static let fastScrollMultiplier = "fastScrollMultiplier"
+    static let fastScrollMouse = "fastScrollMouse"
+    static let fastScrollTrackpad = "fastScrollTrackpad"
     static let previewSize = "previewSize"                // dock preview thumbnail size (once shared with the app switcher)
     static let switcherPreviewSize = "switcherPreviewSize" // app switcher thumbnail size
     static let autoCheckUpdates = "autoCheckUpdates"
@@ -376,6 +396,8 @@ enum DefaultsKey {
     static let panelControlTextSnippets = "panelControlTextSnippets"
     static let panelControlSuperKey = "panelControlSuperKey"
     static let panelControlTrackpadEdges = "panelControlTrackpadEdges"
+    static let panelControlTrackpadGestures = "panelControlTrackpadGestures"
+    static let panelControlFastScroll = "panelControlFastScroll"
     static let panelControlRadialMenu = "panelControlRadialMenu"
     static let panelControlMouseButtonShortcuts = "panelControlMouseButtonShortcuts"
     static let panelControlMouseAcceleration = "panelControlMouseAcceleration"
@@ -1355,6 +1377,26 @@ enum Defaults {
         DefaultsKey.trackpadEdgeFreezeCursor: true,
         DefaultsKey.trackpadEdgeModifier: TrackpadEdgeModifier.none.rawValue,
         DefaultsKey.trackpadEdgeTapToSlide: false,
+        DefaultsKey.trackpadAppSwipeEnabled: false,
+        DefaultsKey.trackpadAppSwipeFingers: TrackpadSwipeFingers.three.rawValue,
+        DefaultsKey.trackpadAppSwipeStepDistance: TrackpadAppSwipeConfiguration.defaultStepDistance,
+        DefaultsKey.trackpadAppSwipeExclusive: true,
+        DefaultsKey.trackpadAppSwipeReversed: false,
+        DefaultsKey.trackpadAppSwipeHaptics: true,
+        DefaultsKey.trackpadAppSwipeEngageDistance: TrackpadAppSwipeConfiguration.defaultEngageDistance,
+        DefaultsKey.trackpadEdgeScrollEnabled: false,
+        DefaultsKey.trackpadEdgeScrollZone: TrackpadEdgeScrollConfiguration.defaultEdgeZone,
+        DefaultsKey.trackpadEdgeScrollSpeed: TrackpadEdgeScrollSpeed.normal.rawValue,
+        DefaultsKey.trackpadEdgeScrollAccelerates: true,
+        DefaultsKey.trackpadEdgeScrollHorizontal: true,
+        DefaultsKey.switcherSwipeFollowsFingers: true,
+        DefaultsKey.switcherSwipeVertical: false,
+        DefaultsKey.switcherSwipeStaysInRow: true,
+        DefaultsKey.fastScrollEnabled: false,
+        DefaultsKey.fastScrollModifier: FastScrollModifier.option.rawValue,
+        DefaultsKey.fastScrollMultiplier: FastScrollPreferences.defaultMultiplier,
+        DefaultsKey.fastScrollMouse: true,
+        DefaultsKey.fastScrollTrackpad: true,
         DefaultsKey.previewSize: "normal",
         DefaultsKey.switcherPreviewSize: "normal",
         DefaultsKey.autoCheckUpdates: true,
@@ -1667,6 +1709,8 @@ enum Defaults {
         DefaultsKey.panelControlTextSnippets: true,
         DefaultsKey.panelControlSuperKey: true,
         DefaultsKey.panelControlTrackpadEdges: true,
+        DefaultsKey.panelControlTrackpadGestures: true,
+        DefaultsKey.panelControlFastScroll: true,
         DefaultsKey.panelControlRadialMenu: true,
         DefaultsKey.panelControlMouseButtonShortcuts: true,
         DefaultsKey.panelControlMouseAcceleration: true,

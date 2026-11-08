@@ -60,9 +60,56 @@ struct SwitcherPendingSessionStart {
     }
 }
 
+struct SwitcherTrackpadSwipe: Equatable {
+    let followsFingers: Bool
+    let rows: Bool
+    let staysInRow: Bool
+    let invertedFromDevice: Bool
+
+    init(followsFingers: Bool, rows: Bool, staysInRow: Bool = true, invertedFromDevice: Bool) {
+        self.followsFingers = followsFingers
+        self.rows = rows
+        self.staysInRow = staysInRow
+        self.invertedFromDevice = invertedFromDevice
+    }
+
+    init(defaults: UserDefaults, event: CGEvent) {
+        self.init(followsFingers: Self.flag(DefaultsKey.switcherSwipeFollowsFingers, fallback: true, in: defaults),
+                  rows: Self.rowsEnabled(in: defaults),
+                  staysInRow: Self.staysInRow(in: defaults),
+                  invertedFromDevice: NSEvent(cgEvent: event)?.isDirectionInvertedFromDevice ?? true)
+    }
+
+    static func rowsEnabled(in defaults: UserDefaults) -> Bool {
+        flag(DefaultsKey.switcherSwipeVertical, fallback: false, in: defaults)
+    }
+
+    static func staysInRow(in defaults: UserDefaults) -> Bool {
+        rowsEnabled(in: defaults) && flag(DefaultsKey.switcherSwipeStaysInRow, fallback: true, in: defaults)
+    }
+
+    private static func flag(_ key: String, fallback: Bool, in defaults: UserDefaults) -> Bool {
+        defaults.object(forKey: key) == nil ? fallback : defaults.bool(forKey: key)
+    }
+
+    func forward(_ delta: Double) -> Bool {
+        invertedFromDevice ? delta > 0 : delta < 0
+    }
+}
+
+struct SwitcherScrollStep: Equatable {
+    var columns = 0
+    var rows = 0
+
+    static let none = SwitcherScrollStep()
+}
+
 struct SwitcherScrollNavigation {
     static let gestureStep: Double = 30
+    var trackpadSwipe: SwitcherTrackpadSwipe?
+    static let rowStep: Double = 45
     private var accumulated: Double = 0
+    private var rowAccumulated: Double = 0
     private var lastTimestamp: CGEventTimestamp?
     private var lastGesturePhaseTimestamp: CGEventTimestamp?
     private var wasMouseWheel: Bool?
@@ -71,9 +118,15 @@ struct SwitcherScrollNavigation {
     /// Its tap turns the wheel around only after this one has consumed it,
     /// so a mouse wheel is turned here to follow the way everything else
     /// scrolls, as it did when that tap ran first.
-    mutating func selectionDelta(for input: CGEvent, direction: ScrollDirectionPreferences? = nil) -> Int {
+    mutating func selectionDelta(for input: CGEvent, direction: ScrollDirectionPreferences? = nil,
+                                 swipe: SwitcherTrackpadSwipe? = nil) -> Int {
+        selectionStep(for: input, direction: direction, swipe: swipe).columns
+    }
+
+    mutating func selectionStep(for input: CGEvent, direction: ScrollDirectionPreferences? = nil,
+                                swipe: SwitcherTrackpadSwipe? = nil) -> SwitcherScrollStep {
         guard input.getIntegerValueField(.eventSourceUserData) != ScrollWheelSupport.syntheticTag else {
-            return 0
+            return .none
         }
         let traits = ScrollWheelEventTraits(
             isContinuous: input.getIntegerValueField(.scrollWheelEventIsContinuous) != 0,
@@ -100,13 +153,15 @@ struct SwitcherScrollNavigation {
         if wasMouseWheel != isMouseWheel || phase == .began
             || (!isMouseWheel && lastTimestamp.map({ event.timestamp &- $0 > 250_000_000 }) == true) {
             accumulated = 0
+            rowAccumulated = 0
         }
         wasMouseWheel = isMouseWheel
         lastTimestamp = event.timestamp
         guard traits.momentumPhase == 0,
               phase != .ended, phase != .cancelled else {
             accumulated = 0
-            return 0
+            rowAccumulated = 0
+            return .none
         }
         func movement(line: CGEventField, fixed: CGEventField, point: CGEventField) -> Double {
             guard isMouseWheel else { return event.getDoubleValueField(point) }
@@ -120,15 +175,41 @@ struct SwitcherScrollNavigation {
                                 point: .scrollWheelEventPointDeltaAxis1)
         let horizontal = movement(line: .scrollWheelEventDeltaAxis2, fixed: .scrollWheelEventFixedPtDeltaAxis2,
                                   point: .scrollWheelEventPointDeltaAxis2)
+        if !isMouseWheel, let swipe = swipe ?? trackpadSwipe, swipe.followsFingers {
+            return fingerStep(vertical: vertical, horizontal: horizontal, swipe: swipe)
+        }
         let delta = abs(horizontal) > abs(vertical) ? horizontal : vertical
-        guard delta.isFinite, delta != 0 else { return 0 }
+        guard delta.isFinite, delta != 0 else { return .none }
         if accumulated * delta < 0 { accumulated = 0 }
         accumulated += delta
         let step = isMouseWheel ? 1 : Self.gestureStep
-        guard abs(accumulated) >= step else { return 0 }
+        guard abs(accumulated) >= step else { return .none }
         // Each sample advances at most one item, without acceleration or momentum.
         accumulated = isMouseWheel ? accumulated.truncatingRemainder(dividingBy: step) : 0
-        return delta < 0 ? 1 : -1
+        return SwitcherScrollStep(columns: delta < 0 ? 1 : -1)
+    }
+
+    private mutating func fingerStep(vertical: Double, horizontal: Double,
+                                     swipe: SwitcherTrackpadSwipe) -> SwitcherScrollStep {
+        guard vertical.isFinite, horizontal.isFinite else { return .none }
+        if abs(horizontal) >= abs(vertical) {
+            guard horizontal != 0 else { return .none }
+            let signed = swipe.forward(horizontal) ? abs(horizontal) : -abs(horizontal)
+            if accumulated * signed < 0 { accumulated = 0 }
+            accumulated += signed
+            guard abs(accumulated) >= Self.gestureStep else { return .none }
+            accumulated = 0
+            rowAccumulated = 0
+            return SwitcherScrollStep(columns: signed > 0 ? 1 : -1)
+        }
+        guard swipe.rows else { return .none }
+        let signed = swipe.forward(vertical) ? abs(vertical) : -abs(vertical)
+        if rowAccumulated * signed < 0 { rowAccumulated = 0 }
+        rowAccumulated += signed
+        guard abs(rowAccumulated) >= Self.rowStep else { return .none }
+        rowAccumulated = 0
+        accumulated = 0
+        return SwitcherScrollStep(rows: signed > 0 ? 1 : -1)
     }
 }
 
@@ -936,6 +1017,15 @@ enum SwitcherSupport {
                               mergeWindowsByApp: Bool,
                               sessionScope: SwitcherSessionScope) -> Bool {
         simpleMode && (!mergeWindowsByApp || sessionScope != .allApps)
+    }
+
+    /// The position `delta` steps away, clamped to the same row of `columns`.
+    static func rowClampedPosition(_ position: Int, delta: Int, count: Int, columns: Int) -> Int {
+        guard count > 0, (0..<count).contains(position) else { return position }
+        let safeColumns = columns > 0 ? columns : count
+        let rowStart = position / safeColumns * safeColumns
+        let rowEnd = min(rowStart + safeColumns, count) - 1
+        return min(max(position + delta, rowStart), rowEnd)
     }
 
     static func usesAppGroupsForMainShortcut(iconRowLayout: Bool,

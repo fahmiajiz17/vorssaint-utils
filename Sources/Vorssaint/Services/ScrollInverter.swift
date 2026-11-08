@@ -94,7 +94,8 @@ final class ScrollInverter: ObservableObject {
                 postPinch(phase: 4, magnification: 0, at: pinchLocation)
             }
         }
-        if SessionActivitySupport.tapShouldRun(featureWanted: direction.isEnabled || Self.linearScrollWanted,
+        if SessionActivitySupport.tapShouldRun(featureWanted: direction.isEnabled || Self.linearScrollWanted
+                                                   || FastScrollPreferences().wantsTap,
                                                accessibilityGranted: Permissions.shared.accessibility,
                                                sessionIsActive: SessionActivity.shared.isActive) {
             ScrollWheelTarget.shared.setEnabled(direction.horizontalModifier != nil || direction.zoom.isEnabled)
@@ -267,7 +268,11 @@ final class ScrollInverter: ObservableObject {
 
         guard ScrollWheelSupport.isMouseWheel(traits,
                                               secondsSinceLastGesturePhase: secondsSinceGesturePhase)
-        else { return Unmanaged.passUnretained(event) }
+        else {
+            FastScrollSupport.boost(event, preferences: FastScrollPreferences(defaults: UserDefaults.standard),
+                                    isMouseWheel: false)
+            return Unmanaged.passUnretained(event)
+        }
 
         let defaults = UserDefaults.standard
         let direction = ScrollDirectionPreferences(defaults: defaults)
@@ -336,6 +341,8 @@ final class ScrollInverter: ObservableObject {
             linearCarryVertical = 0
             linearCarryHorizontal = 0
         }
+
+        FastScrollSupport.boost(event, preferences: FastScrollPreferences(defaults: defaults), isMouseWheel: true)
 
         // The direction features read their own availability here: linear
         // scrolling may be what keeps this tap alive, so the tap running says

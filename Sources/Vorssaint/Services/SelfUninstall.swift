@@ -170,6 +170,9 @@ enum SelfUninstall {
         if AppFeature.trackpadEdges.isAvailable {
             TrackpadEdgeService.shared.suspend()
         }
+        if AppFeature.trackpadGestures.isAvailable {
+            TrackpadGestureService.shared.suspend()
+        }
         QuitProtectionService.shared.suspend()
         PastePlainService.shared.suspend()
         SnippetLibraryService.shared.suspend()

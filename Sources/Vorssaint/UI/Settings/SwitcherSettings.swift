@@ -29,6 +29,9 @@ struct SwitcherSettings: View {
     @AppStorage(DefaultsKey.switcherShowShortcutHints) private var switcherShowShortcutHints = true
     @AppStorage(DefaultsKey.switcherAppearanceDelay) private var switcherAppearanceDelay = SwitcherSupport.defaultAppearanceDelayMilliseconds
     @AppStorage(DefaultsKey.switcherInstantSelection) private var switcherInstantSelection = false
+    @AppStorage(DefaultsKey.switcherSwipeFollowsFingers) private var switcherSwipeFollowsFingers = true
+    @AppStorage(DefaultsKey.switcherSwipeVertical) private var switcherSwipeVertical = false
+    @AppStorage(DefaultsKey.switcherSwipeStaysInRow) private var switcherSwipeStaysInRow = true
     @AppStorage(DefaultsKey.switcherIgnoreHoverSelection) private var switcherIgnoreHoverSelection = false
     @AppStorage(DefaultsKey.switcherMaxColumns) private var switcherMaxColumns = 0
     private var pages: SettingsPageStrings { FeatureStrings.settingsPages(l10n.language) }
@@ -204,6 +207,8 @@ struct SwitcherSettings: View {
         }
     }
 
+    private var swipeText: TrackpadGestureStrings { FeatureStrings.trackpadGestures(l10n.language) }
+
     private var switcherOptionsCard: some View {
         SettingsCard(title: l10n.s.keepAwakeOptions) {
             SettingsRow(symbol: "timer", title: l10n.s.switcherAppearanceDelay,
@@ -242,6 +247,24 @@ struct SwitcherSettings: View {
             SettingsRow(symbol: "cursorarrow.slash", title: l10n.s.switcherIgnoreHoverSelection,
                         caption: l10n.s.switcherIgnoreHoverSelectionCaption) {
                 Toggle(l10n.s.switcherIgnoreHoverSelection, isOn: $switcherIgnoreHoverSelection).labelsHidden()
+            }
+            SettingsRow(symbol: "hand.point.right", title: swipeText.switcherFollowToggle,
+                        caption: swipeText.switcherFollowCaption) {
+                Toggle(swipeText.switcherFollowToggle, isOn: $switcherSwipeFollowsFingers).labelsHidden()
+            }
+            SettingsRow(symbol: "arrow.up.and.down", title: swipeText.switcherVerticalToggle,
+                        caption: swipeText.switcherVerticalCaption) {
+                Toggle(swipeText.switcherVerticalToggle, isOn: $switcherSwipeVertical)
+                    .labelsHidden()
+                    .onChange(of: switcherSwipeVertical) { _, _ in
+                        TrackpadGestureService.shared.syncWithPreferences()
+                    }
+            }
+            SettingsRow(symbol: "arrow.left.and.right.square", title: swipeText.staysInRowToggle,
+                        caption: swipeText.staysInRowCaption) {
+                Toggle(swipeText.staysInRowToggle, isOn: $switcherSwipeStaysInRow)
+                    .labelsHidden()
+                    .disabled(!switcherSwipeVertical)
             }
             SettingsRow(symbol: "magnifyingglass", title: l10n.s.switcherSearchPin,
                         caption: l10n.s.switcherSearchPinCaption) {

@@ -79,6 +79,11 @@ final class AppSwitcher: ObservableObject {
         routeLock.withLock { routeSessionActive && !routeCapturing }
     }
 
+    var gestureShortcut: GlobalShortcut? {
+        guard isTapLive else { return nil }
+        return routeLock.withLock { routeCanStartSession && !routeCapturing ? routeShortcut : nil }
+    }
+
     private var panel: NSPanel?
     private var sessionItems: [SwitcherItem] = []
     private var sessionWindowServerSnapshot: SwitcherWindowServerSnapshot?
@@ -939,12 +944,22 @@ final class AppSwitcher: ObservableObject {
                 && !MouseAppExceptions.shared.excludesPointerTarget(
                     .scrollDirection, at: event.location,
                     sourceProcessID: event.getIntegerValueField(.eventSourceUnixProcessID))
-            let delta = scrollNavigation.selectionDelta(for: event, direction: directionApplies ? direction : nil)
-            if delta != 0 {
+            guard !TrackpadExtraFingerScroll.shared.isTouching else { return nil }
+            let swipe = SwitcherTrackpadSwipe(defaults: .standard, event: event)
+            scrollNavigation.trackpadSwipe = swipe
+            let step = scrollNavigation.selectionStep(for: event, direction: directionApplies ? direction : nil)
+            if step != .none {
                 // Moving the row must not select the card under a stationary pointer.
                 hoverAnchor = NSEvent.mouseLocation
                 hoveredWindowIndex = nil
-                advanceSelection(by: delta, wrapping: false)
+                if step.rows != 0 { moveSelection(by: step.rows) }
+                if step.columns != 0 {
+                    if swipe.staysInRow, swipe.followsFingers {
+                        advanceSelectionInRow(by: step.columns)
+                    } else {
+                        advanceSelection(by: step.columns, wrapping: false)
+                    }
+                }
             }
             return nil
         case .keyDown:
@@ -1571,6 +1586,44 @@ final class AppSwitcher: ObservableObject {
             return
         }
         selectedIndex = (next + windows.count) % windows.count
+    }
+
+    /// Moves sideways within the selected row only, stopping at its ends.
+    private func advanceSelectionInRow(by delta: Int) {
+        cancelIconRowEdgeHover()
+        guard windows.indices.contains(selectedIndex), delta != 0 else { return }
+        let groupsApps = usesIconRowLayout && !usesWindowRow && sessionScope == .allApps
+        let groups = groupsApps ? SwitcherSupport.appGroups(items: windows, currentSpaceOnly: currentSpaceOnly) : []
+        let selectedID = windows[selectedIndex].id
+        let position = groupsApps
+            ? groups.firstIndex { $0.itemIDs.contains(selectedID) } ?? 0
+            : selectedIndex
+        let count = groupsApps ? groups.count : windows.count
+        let columns = usesIconRowLayout
+            ? (iconRowLayout.isWrapped ? iconRowLayout.columns : count)
+            : grid.columns
+        let target = SwitcherSupport.rowClampedPosition(position, delta: delta, count: count, columns: columns)
+        guard target != position else { return }
+        userNavigated = true
+        selectedIndex = groupsApps ? groups[target].representativeIndex : target
+    }
+
+    /// Moves the open session's selection for a trackpad gesture step.
+    @discardableResult
+    func navigateFromGesture(columnDelta: Int, rowDelta: Int, staysInRow: Bool) -> Bool {
+        guard sessionActive, !windows.isEmpty else { return false }
+        let before = selectedIndex
+        hoverAnchor = NSEvent.mouseLocation
+        hoveredWindowIndex = nil
+        if rowDelta != 0 { moveSelection(by: rowDelta) }
+        if columnDelta != 0 {
+            if staysInRow {
+                advanceSelectionInRow(by: columnDelta)
+            } else {
+                advanceSelection(by: columnDelta)
+            }
+        }
+        return selectedIndex != before
     }
 
     private func advanceAppSelection(by delta: Int, wrapping: Bool = true) {

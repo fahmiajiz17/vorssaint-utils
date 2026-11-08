@@ -405,12 +405,14 @@ final class SmoothScrollService: ObservableObject {
             carryVertical = 0
             carryHorizontal = 0
         }
-        let verticalDistance = vertical * step
-        let horizontalDistance = horizontal * step
+        let fastScroll = FastScrollPreferences(defaults: defaults)
+        let boost = fastScroll.factor(flags: event.flags, isMouseWheel: true) ?? 1
+        let verticalDistance = vertical * step * boost
+        let horizontalDistance = horizontal * step * boost
         carryVertical = SmoothScrollSupport.carry(carryVertical, continuing: verticalDistance)
         carryHorizontal = SmoothScrollSupport.carry(carryHorizontal, continuing: horizontalDistance)
         engine.add(vertical: verticalDistance, horizontal: horizontalDistance)
-        currentFlags = event.flags
+        currentFlags = boost == 1 ? event.flags : event.flags.subtracting(fastScroll.modifier.flag)
         currentScrollRedirected = redirected
         currentResponse = SmoothScrollSupport.sanitizedResponse(
             defaults.integer(forKey: DefaultsKey.smoothScrollResponse)

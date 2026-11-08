@@ -525,6 +525,10 @@ if (( TEST )); then
         Sources/Vorssaint/Services/SuperKey/SuperKeySupport.swift
         Sources/Vorssaint/Services/Trackpad/TrackpadEdgeSupport.swift
         Sources/Vorssaint/Core/TrackpadEdgeStrings.swift
+        Sources/Vorssaint/Services/Trackpad/TrackpadGestureSupport.swift
+        Sources/Vorssaint/Core/TrackpadGestureStrings.swift
+        Sources/Vorssaint/Services/FastScrollSupport.swift
+        Sources/Vorssaint/Core/FastScrollStrings.swift
         Sources/Vorssaint/Services/SuperKey/SuperKeyMappingGuard.swift
         Sources/Vorssaint/Core/SuperKeyStrings.swift
         Sources/Vorssaint/Core/InputSourceSelection.swift

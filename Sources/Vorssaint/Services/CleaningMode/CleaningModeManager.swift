@@ -117,6 +117,9 @@ final class CleaningModeManager: ObservableObject {
         if AppFeature.trackpadEdges.isAvailable {
             TrackpadEdgeService.shared.suspend()
         }
+        if AppFeature.trackpadGestures.isAvailable {
+            TrackpadGestureService.shared.suspend()
+        }
         MouseNavigationService.shared.suspend()
         // A stray side-button press while wiping the mouse must not type a
         // key combination into the frontmost app (the synthesized keys are
@@ -205,6 +208,9 @@ final class CleaningModeManager: ObservableObject {
         MiddleClickService.shared.syncWithPreferences()
         if AppFeature.trackpadEdges.isAvailable {
             TrackpadEdgeService.shared.syncWithPreferences()
+        }
+        if AppFeature.trackpadGestures.isAvailable {
+            TrackpadGestureService.shared.syncWithPreferences()
         }
         MouseNavigationService.shared.syncWithPreferences()
         MouseButtonShortcutService.shared.syncWithPreferences()

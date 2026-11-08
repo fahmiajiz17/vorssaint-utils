@@ -10,11 +10,14 @@ All notable changes to this project are documented here. The format follows
 More reliable window switching, audio, notifications and display controls, with better GIF exports, large-image editing and compact-panel behavior. New options improve window dragging, shortcut setup and uninstaller selection.
 
 ### Added
+- Trackpad gestures: swipe sideways with three or four fingers to open the app switcher, keep sliding to pick an app and lift to switch, with natural direction, adjustable distances to open it and to move per app, up and down swipes between rows that can keep sideways swipes in their row, an option that stops the swipe fingers from also scrolling pages, haptic ticks and warnings when Three-finger drag or a system swipe uses the same fingers. Two fingers resting at the trackpad's edge keep scrolling the page the way they were going, easing in and speeding up while held.
+- Fast scrolling: hold Option (or Command, Control or Fn) while scrolling to move several times faster with the mouse wheel, the trackpad or both, including with smooth and linear scrolling.
 - The window switcher can ignore hover selection while preserving clicks, keyboard navigation and hovered-window closing. Overflowing icon rows still slide at their edges. The option starts off. Thanks to @victorioustr.
 - Edge snapping can restore a window's previous size when it is dragged by its title bar, preserving manual resizing and using the size confirmed by the app. The option starts off and respects ignored apps. Thanks to @nisayera.
 - Both uninstaller result views offer a Select all checkbox with a mixed state, including optional rows when explicitly selected and preserving removal safeguards. Thanks to @heyseere.
 
 ### Changed
+- Swiping on the trackpad while the window switcher is open now moves the selection the way the fingers go, and up and down swipes no longer change it unless turned on.
 - GIF exports can retain the full edited resolution and offer scale and frame-rate controls, with captions kept proportional at smaller sizes. Thanks to @COMEBACKISREAL.
 - Large clipboard images can be resized before opening in the screenshot editor, preserving native image formats, the primary HEIC image and its orientation. Thanks to @kit101.
 - Supported DDC monitors can use software picture dimming instead of hardware brightness commands, with pending brightness changes cancelled when switching modes. Thanks to @yavuzmeteafsar.

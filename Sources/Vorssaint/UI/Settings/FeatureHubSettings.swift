@@ -1151,11 +1151,13 @@ extension AppFeature {
         case .focusFollowsMouse: return s.focusFollowsMouseName
         case .smoothScroll: return s.smoothScrollName
         case .linearScroll: return s.linearScrollName
+        case .fastScroll: return FeatureStrings.fastScroll(language).title
         case .mouseAcceleration: return s.mouseAccelerationName
         case .mouseNavigation: return hub.titleMouseNavigation
         case .mouseButtonShortcuts: return FeatureStrings.mouseButtons(language).pageTitle
         case .middleClick: return s.middleClickSection
         case .trackpadEdges: return FeatureStrings.trackpadEdges(language).pageTitle
+        case .trackpadGestures: return FeatureStrings.trackpadGestures(language).pageTitle
         case .keyboardDebounce: return s.keyDebounceName
         case .textSnippets: return FeatureStrings.snippets(language).pageTitle
         case .superKey: return FeatureStrings.superKey(language).pageTitle
@@ -1238,11 +1240,13 @@ extension AppFeature {
         case .focusFollowsMouse: return L10n.shared.s.focusFollowsMouseCaption
         case .smoothScroll: return hub.descSmoothScroll
         case .linearScroll: return L10n.shared.s.linearScrollCaption
+        case .fastScroll: return FeatureStrings.fastScroll(L10n.shared.language).hubDescription
         case .mouseAcceleration: return L10n.shared.s.mouseAccelerationCaption
         case .mouseNavigation: return hub.descMouseNavigation
         case .mouseButtonShortcuts: return FeatureStrings.mouseButtons(L10n.shared.language).hubDescription
         case .middleClick: return hub.descMiddleClick
         case .trackpadEdges: return FeatureStrings.trackpadEdges(L10n.shared.language).hubDescription
+        case .trackpadGestures: return FeatureStrings.trackpadGestures(L10n.shared.language).hubDescription
         case .keyboardDebounce: return hub.descKeyboardDebounce
         case .textSnippets: return FeatureStrings.snippets(L10n.shared.language).hubDescription
         case .superKey: return FeatureStrings.superKey(L10n.shared.language).hubDescription

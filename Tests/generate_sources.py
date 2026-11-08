@@ -1880,6 +1880,7 @@ def main():
                                    "    func hoverSelectIconRowEnded(", "    private var selectedItemID:",
                                    "    private func handleShiftBackNavigation(", "    private func consumesShiftBackChordTab(",
                                    "    private func advanceSelection(", "    private func advanceAppSelection(",
+                                   "    private func advanceSelectionInRow(",
                                    "    private func advanceWindowInSelectedApp(", "    private func moveSelection(",
                                    "    private func moveIconRowSelection(", "    private func printableSearchText(",
                                    "    private func sanitizedSearchInput(", "    private func appendSearchText(",
