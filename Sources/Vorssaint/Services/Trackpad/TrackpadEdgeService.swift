@@ -45,6 +45,7 @@ final class TrackpadEdgeService: ObservableObject {
     private var observers: [Any] = []
     private var hotplugPort: IONotificationPortRef?
     private var hotplugIterators: [io_iterator_t] = []
+    private let deviceRecovery = TrackpadDeviceRecovery()
 
     private var configuration = TrackpadEdgeConfiguration.standard
     private var hapticsEnabled = true
@@ -125,6 +126,7 @@ final class TrackpadEdgeService: ObservableObject {
         startMultitouch()
         installObservers()
         isRunning = true
+        if touchDeviceMissing { recoverMultitouch() }
     }
 
     private func stop() {
@@ -140,6 +142,7 @@ final class TrackpadEdgeService: ObservableObject {
         if let source {
             PointerTapRunLoop.remove(source, invalidating: port)
         }
+        deviceRecovery.cancel()
         stopMultitouch()
         removeObservers()
         stateLock.withLock {
@@ -164,6 +167,15 @@ final class TrackpadEdgeService: ObservableObject {
         guard tapLock.withLock({ tap }) != nil else { return }
         stopMultitouch()
         startMultitouch()
+    }
+
+    private func recoverMultitouch() {
+        restartMultitouch()
+        deviceRecovery.begin { [weak self] in
+            guard let self, self.tapLock.withLock({ self.tap }) != nil else { return true }
+            self.restartMultitouch()
+            return !self.touchDeviceMissing
+        }
     }
 
     private func startMultitouch() {
@@ -208,7 +220,7 @@ final class TrackpadEdgeService: ObservableObject {
         observers.append(center.addObserver(forName: NSWorkspace.didWakeNotification,
                                             object: nil,
                                             queue: .main) { [weak self] _ in
-            self?.restartMultitouch()
+            self?.recoverMultitouch()
         })
         installHotplugObserver()
     }
@@ -231,7 +243,7 @@ final class TrackpadEdgeService: ObservableObject {
                         IOObjectRelease(entry)
                     }
                     let service = Unmanaged<TrackpadEdgeService>.fromOpaque(context).takeUnretainedValue()
-                    service.restartMultitouch()
+                    service.recoverMultitouch()
                 },
                 context,
                 &iterator

@@ -28,6 +28,7 @@ More reliable window switching, audio, notifications and display controls, with 
 - Trackpad edges: slide along the trackpad's edges to change volume, display or keyboard brightness and microphone level, swipe the bottom edge to skip tracks, and double-tap corners to mute the microphone or sound, control playback, close, minimize, fill, hide or quit the front window and app, open Mission Control and more. Steps tick with haptic feedback, edges can require a tap before sliding so resting a finger there changes nothing, the pointer stays still while sliding, and changes appear in the Dynamic Island or the macOS overlay.
 
 ### Fixed
+- Trackpad gestures and Trackpad edges come back on their own after the Mac wakes from sleep instead of staying on "No trackpad found" until the feature is turned off and on, retrying for a while when the trackpad is slow to return.
 - The window switcher opens and switches more efficiently, reduces flashes when restoring minimized windows and cancels outdated activation requests after a newer selection. Thanks to @zhanghao87.
 - The window switcher keeps its opening shortcuts working during secure input, including All windows and quick modifier releases. Q/W remain unavailable in this mode and are blocked while the switcher owns the selection. Thanks to @phatina.
 - Focus follows mouse recovers keyboard focus when the usual no-raise activation fails, while preserving window order when Bring the window to the front is off. Thanks to @jerome-queck.

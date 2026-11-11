@@ -3,6 +3,7 @@
 
 import CoreFoundation
 import Darwin
+import Foundation
 
 enum TrackpadMultitouch {
     typealias ContactCallback = @convention(c) (
@@ -90,5 +91,35 @@ enum TrackpadMultitouch {
     private static func symbol<T>(_ name: String) -> T? {
         guard let handle, let raw = dlsym(handle, name) else { return nil }
         return unsafeBitCast(raw, to: T.self)
+    }
+}
+
+final class TrackpadDeviceRecovery {
+    static let delays: [TimeInterval] = [1, 2, 4, 8, 15, 30]
+
+    private var pending: DispatchWorkItem?
+
+    var isPending: Bool { pending != nil }
+
+    func begin(_ attempt: @escaping () -> Bool) {
+        cancel()
+        schedule(step: 0, attempt)
+    }
+
+    func cancel() {
+        pending?.cancel()
+        pending = nil
+    }
+
+    private func schedule(step: Int, _ attempt: @escaping () -> Bool) {
+        guard Self.delays.indices.contains(step) else { return }
+        let item = DispatchWorkItem { [weak self] in
+            guard let self else { return }
+            self.pending = nil
+            guard !attempt() else { return }
+            self.schedule(step: step + 1, attempt)
+        }
+        pending = item
+        DispatchQueue.main.asyncAfter(deadline: .now() + Self.delays[step], execute: item)
     }
 }

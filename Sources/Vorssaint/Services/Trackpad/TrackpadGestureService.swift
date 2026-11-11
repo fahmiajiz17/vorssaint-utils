@@ -30,6 +30,7 @@ final class TrackpadGestureService: ObservableObject {
     private var observers: [Any] = []
     private var hotplugPort: IONotificationPortRef?
     private var hotplugIterators: [io_iterator_t] = []
+    private let deviceRecovery = TrackpadDeviceRecovery()
 
     private let tapLock = NSLock()
     private var scrollTap: CFMachPort?
@@ -110,11 +111,13 @@ final class TrackpadGestureService: ObservableObject {
         startMultitouch()
         installObservers()
         if !isRunning { isRunning = true }
+        if touchDeviceMissing, !deviceRecovery.isPending { recoverMultitouch() }
     }
 
     private func stop() {
         TrackpadExtraFingerScroll.shared.configure(fingers: nil, mutesApps: false)
         removeScrollTap()
+        deviceRecovery.cancel()
         stopMultitouch()
         removeObservers()
         releaseSwitcher()
@@ -190,11 +193,20 @@ final class TrackpadGestureService: ObservableObject {
     }
 
     private func restartMultitouch() {
-        guard deviceList != nil else { return }
+        guard isRunning else { return }
         releaseSwitcher()
         stopAutoScroll()
         stopMultitouch()
         startMultitouch()
+    }
+
+    private func recoverMultitouch() {
+        restartMultitouch()
+        deviceRecovery.begin { [weak self] in
+            guard let self, self.isRunning else { return true }
+            self.restartMultitouch()
+            return !self.touchDeviceMissing
+        }
     }
 
     private func startMultitouch() {
@@ -243,7 +255,7 @@ final class TrackpadGestureService: ObservableObject {
         })
         observers.append(center.addObserver(forName: NSWorkspace.didWakeNotification,
                                             object: nil, queue: .main) { [weak self] _ in
-            self?.restartMultitouch()
+            self?.recoverMultitouch()
         })
         installHotplugObserver()
     }
@@ -266,7 +278,7 @@ final class TrackpadGestureService: ObservableObject {
                         IOObjectRelease(entry)
                     }
                     let service = Unmanaged<TrackpadGestureService>.fromOpaque(context).takeUnretainedValue()
-                    service.restartMultitouch()
+                    service.recoverMultitouch()
                 },
                 context,
                 &iterator
