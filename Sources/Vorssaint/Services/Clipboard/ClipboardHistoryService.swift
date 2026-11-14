@@ -104,6 +104,10 @@ final class ClipboardHistoryService: ObservableObject {
     private var hotKeyRef: EventHotKeyRef?
     private var hotKeyHandler: EventHandlerRef?
     private var registeredShortcut: GlobalShortcut?
+    private var doubleCopyMonitor: Any?
+    private var doubleCopyMonitorTrusted = false
+    private var doubleCopyDetector = ClipboardDoubleCopyDetector()
+    private var doubleCopyPermissionObserver: AnyCancellable?
     private var pasteTargetApp: NSRunningApplication?
     private var promptedForAccessibility = false
     /// Writes coalesce per mutation cycle; the JSON encode and the disk write
@@ -131,6 +135,7 @@ final class ClipboardHistoryService: ObservableObject {
             stop()
             unregisterHotkey()
         }
+        syncDoubleCopyTrigger()
     }
 
     /// Skips capturing pasteboard changes up to the given change count. Quick
@@ -1221,6 +1226,58 @@ final class ClipboardHistoryService: ObservableObject {
             registeredShortcut = nil
             shortcutRegistrationFailed = true
         }
+    }
+
+    func syncDoubleCopyTrigger() {
+        let defaults = UserDefaults.standard
+        let wanted = AppFeature.clipboardHistory.isAvailable
+            && defaults.bool(forKey: DefaultsKey.clipboardHistoryEnabled)
+            && defaults.bool(forKey: DefaultsKey.clipboardHistoryDoubleCopyEnabled)
+        if wanted {
+            installDoubleCopyMonitor()
+            observeDoubleCopyPermission()
+        } else {
+            removeDoubleCopyMonitor()
+            doubleCopyPermissionObserver = nil
+        }
+    }
+
+    private func observeDoubleCopyPermission() {
+        guard doubleCopyPermissionObserver == nil else { return }
+        doubleCopyPermissionObserver = Permissions.shared.$accessibility
+            .removeDuplicates()
+            .dropFirst()
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in self?.syncDoubleCopyTrigger() }
+    }
+
+    private func installDoubleCopyMonitor() {
+        let trusted = AXIsProcessTrusted()
+        if doubleCopyMonitor != nil, doubleCopyMonitorTrusted == trusted { return }
+        removeDoubleCopyMonitor()
+        doubleCopyMonitorTrusted = trusted
+        doubleCopyMonitor = NSEvent.addGlobalMonitorForEvents(matching: .keyDown) { [weak self] event in
+            self?.handleDoubleCopyKey(event)
+        }
+    }
+
+    private func removeDoubleCopyMonitor() {
+        if let doubleCopyMonitor { NSEvent.removeMonitor(doubleCopyMonitor) }
+        doubleCopyMonitor = nil
+        doubleCopyMonitorTrusted = false
+        doubleCopyDetector.reset()
+    }
+
+    private func handleDoubleCopyKey(_ event: NSEvent) {
+        let modifiers = event.modifierFlags.intersection(.deviceIndependentFlagsMask)
+            .subtracting([.capsLock, .function, .numericPad])
+        let isCommandC = modifiers == .command
+            && event.charactersIgnoringModifiers?.lowercased() == "c"
+        guard doubleCopyDetector.register(isCommandC: isCommandC,
+                                          isRepeat: event.isARepeat,
+                                          at: event.timestamp)
+        else { return }
+        showHistoryWindow()
     }
 
     /// Lets go of the global key while a shortcut field is listening, so the

@@ -8,6 +8,7 @@ All notable changes to this project are documented here. The format follows
 
 ### Added
 - Trackpad gestures: swipe sideways with three or four fingers to open the app switcher, keep sliding to pick an app and lift to switch, with natural direction, adjustable distances to open it and to move per app, up and down swipes between rows that can keep sideways swipes in their row, an option that stops the swipe fingers from also scrolling pages, haptic ticks and warnings when Three-finger drag or a system swipe uses the same fingers. Two fingers resting at the trackpad's edge keep scrolling the page the way they were going, easing in and speeding up while held.
+- Clipboard: hold ⌘ and press C twice quickly to copy and open the clipboard history. Turn it on under the history shortcut in Clipboard settings; it works alongside the regular shortcut and needs Accessibility.
 - Trackpad edges: slide along the trackpad's edges to change volume, display or keyboard brightness and microphone level, swipe the bottom edge to skip tracks, and double-tap corners to mute the microphone or sound, control playback, close, minimize, fill, hide or quit the front window and app, open Mission Control and more. Steps tick with haptic feedback, edges can require a tap before sliding so resting a finger there changes nothing, the pointer stays still while sliding, and changes appear in the Dynamic Island or the macOS overlay.
 
 ### Changed

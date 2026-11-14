@@ -235,6 +235,7 @@ struct MetricsTests {
             }),
             ("spaces-order", { SpacesOrderTests.run(suite) }),
             ("trackpad-edges", { TrackpadEdgeTests.run(suite) }),
+            ("clipboard-double-copy", { ClipboardDoubleCopyTests.run(suite) }),
             ("trackpad-gestures", { TrackpadGestureTests.run(suite) }),
             ("switcher", {
                 SwitcherHoverSelectionTests.run(suite)

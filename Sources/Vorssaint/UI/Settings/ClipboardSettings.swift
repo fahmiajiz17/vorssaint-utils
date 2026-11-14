@@ -17,6 +17,7 @@ struct ClipboardSettings: View {
     @AppStorage(DefaultsKey.clipboardHistoryFilterSensitiveText) private var skipSensitive = false
     @AppStorage(DefaultsKey.clipboardHistoryIncludeImagesFiles) private var includeImagesFiles = true
     @AppStorage(DefaultsKey.clipboardHistoryShortcutEnabled) private var shortcutEnabled = true
+    @AppStorage(DefaultsKey.clipboardHistoryDoubleCopyEnabled) private var doubleCopyEnabled = false
     @AppStorage(DefaultsKey.clipboardHistoryShowSourceAppIcons) private var showSourceAppIcons = false
     @AppStorage(DefaultsKey.clipboardHistoryLayout) private var historyLayout = ClipboardHistoryLayout.list
     @AppStorage(DefaultsKey.clipboardHistoryMenuBarPreview) private var menuBarPreview = false
@@ -33,6 +34,10 @@ struct ClipboardSettings: View {
 
     private var text: ClipboardFeatureStrings {
         FeatureStrings.clipboard(l10n.language)
+    }
+
+    private var doubleCopyText: ClipboardDoubleCopyStrings {
+        FeatureStrings.clipboardDoubleCopy(l10n.language)
     }
 
     private var retentionText: ClipboardRetentionStrings {
@@ -203,6 +208,17 @@ struct ClipboardSettings: View {
             Text(text.shortcutCaption)
                 .font(.caption)
                 .foregroundStyle(.secondary)
+            Toggle(doubleCopyText.toggle, isOn: $doubleCopyEnabled)
+                .onChange(of: doubleCopyEnabled) { _, _ in
+                    ClipboardHistoryService.shared.syncDoubleCopyTrigger()
+                }
+                .disabled(!enabled)
+            Text(doubleCopyText.caption)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+            if enabled, doubleCopyEnabled, !permissions.accessibility {
+                PermissionRow(kind: .accessibility)
+            }
             // Not disabled with capture off: the window still opens on the
             // saved items, like the button below.
             Picker(text.historyLayout, selection: $historyLayout) {
