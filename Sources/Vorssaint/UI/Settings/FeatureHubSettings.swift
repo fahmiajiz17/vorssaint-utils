@@ -1151,6 +1151,7 @@ extension AppFeature {
         case .focusFollowsMouse: return s.focusFollowsMouseName
         case .smoothScroll: return s.smoothScrollName
         case .linearScroll: return s.linearScrollName
+        case .scrollSpeed: return s.scrollSpeedName
         case .fastScroll: return FeatureStrings.fastScroll(language).title
         case .mouseAcceleration: return s.mouseAccelerationName
         case .mouseNavigation: return hub.titleMouseNavigation
@@ -1240,6 +1241,7 @@ extension AppFeature {
         case .focusFollowsMouse: return L10n.shared.s.focusFollowsMouseCaption
         case .smoothScroll: return hub.descSmoothScroll
         case .linearScroll: return L10n.shared.s.linearScrollCaption
+        case .scrollSpeed: return L10n.shared.s.scrollSpeedCaption
         case .fastScroll: return FeatureStrings.fastScroll(L10n.shared.language).hubDescription
         case .mouseAcceleration: return L10n.shared.s.mouseAccelerationCaption
         case .mouseNavigation: return hub.descMouseNavigation
