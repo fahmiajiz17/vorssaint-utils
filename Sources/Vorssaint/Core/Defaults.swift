@@ -182,11 +182,6 @@ enum DefaultsKey {
     static let switcherSwipeFollowsFingers = "switcherSwipeFollowsFingers"
     static let switcherSwipeVertical = "switcherSwipeVertical"
     static let switcherSwipeStaysInRow = "switcherSwipeStaysInRow"
-    static let fastScrollEnabled = "fastScrollEnabled"
-    static let fastScrollModifier = "fastScrollModifier"
-    static let fastScrollMultiplier = "fastScrollMultiplier"
-    static let fastScrollMouse = "fastScrollMouse"
-    static let fastScrollTrackpad = "fastScrollTrackpad"
     static let previewSize = "previewSize"                // dock preview thumbnail size (once shared with the app switcher)
     static let switcherPreviewSize = "switcherPreviewSize" // app switcher thumbnail size
     static let autoCheckUpdates = "autoCheckUpdates"
@@ -415,7 +410,6 @@ enum DefaultsKey {
     static let panelControlSuperKey = "panelControlSuperKey"
     static let panelControlTrackpadEdges = "panelControlTrackpadEdges"
     static let panelControlTrackpadGestures = "panelControlTrackpadGestures"
-    static let panelControlFastScroll = "panelControlFastScroll"
     static let panelControlRadialMenu = "panelControlRadialMenu"
     static let panelControlMouseButtonShortcuts = "panelControlMouseButtonShortcuts"
     static let panelControlMouseAcceleration = "panelControlMouseAcceleration"
@@ -1419,11 +1413,6 @@ enum Defaults {
         DefaultsKey.switcherSwipeFollowsFingers: true,
         DefaultsKey.switcherSwipeVertical: false,
         DefaultsKey.switcherSwipeStaysInRow: true,
-        DefaultsKey.fastScrollEnabled: false,
-        DefaultsKey.fastScrollModifier: FastScrollModifier.option.rawValue,
-        DefaultsKey.fastScrollMultiplier: FastScrollPreferences.defaultMultiplier,
-        DefaultsKey.fastScrollMouse: true,
-        DefaultsKey.fastScrollTrackpad: true,
         DefaultsKey.previewSize: "normal",
         DefaultsKey.switcherPreviewSize: "normal",
         DefaultsKey.autoCheckUpdates: true,
@@ -1743,7 +1732,6 @@ enum Defaults {
         DefaultsKey.panelControlSuperKey: true,
         DefaultsKey.panelControlTrackpadEdges: true,
         DefaultsKey.panelControlTrackpadGestures: true,
-        DefaultsKey.panelControlFastScroll: true,
         DefaultsKey.panelControlRadialMenu: true,
         DefaultsKey.panelControlMouseButtonShortcuts: true,
         DefaultsKey.panelControlMouseAcceleration: true,

@@ -49,12 +49,6 @@ struct MouseSettings: View {
     @AppStorage(DefaultsKey.mouseClickDebounceEnabled) private var mouseClickDebounceEnabled = false
     @AppStorage(DefaultsKey.mouseClickDebounceWindowMs) private var mouseClickDebounceWindow =
         Defaults.defaultMouseClickDebounceWindowMs
-    @AppStorage(DefaultsKey.fastScrollEnabled) private var fastScrollEnabled = false
-    @AppStorage(DefaultsKey.fastScrollModifier) private var fastScrollModifier = FastScrollModifier.option.rawValue
-    @AppStorage(DefaultsKey.fastScrollMultiplier) private var fastScrollMultiplier =
-        FastScrollPreferences.defaultMultiplier
-    @AppStorage(DefaultsKey.fastScrollMouse) private var fastScrollMouse = true
-    @AppStorage(DefaultsKey.fastScrollTrackpad) private var fastScrollTrackpad = true
     @State private var smoothScrollMoreOptionsExpanded = false
 
     private var mouseClickDebounceText: MouseClickDebounceStrings {
@@ -100,10 +94,6 @@ struct MouseSettings: View {
                     scrollSpeedCard
                         .settingsSectionAnchor(.scrollSpeed, cornerRadius: 16)
                 }
-                if AppFeature.fastScroll.isAvailable {
-                    fastScrollCard
-                        .settingsSectionAnchor(.fastScroll, cornerRadius: 16)
-                }
                 if AppFeature.mouseAcceleration.isAvailable {
                     accelerationCard
                         .settingsSectionAnchor(.mouseAcceleration, cornerRadius: 16)
@@ -143,7 +133,7 @@ struct MouseSettings: View {
 
     /// The mouse features on this page, in page order, for the legend.
     private var legendFeatures: [AppFeature] {
-        [.scrollInverter, .scrollHorizontal, .scrollZoom, .focusFollowsMouse, .smoothScroll, .linearScroll, .scrollSpeed, .fastScroll, .mouseAcceleration,
+        [.scrollInverter, .scrollHorizontal, .scrollZoom, .focusFollowsMouse, .smoothScroll, .linearScroll, .scrollSpeed, .mouseAcceleration,
          .mouseNavigation, .mouseButtonShortcuts, .mouseClickDebounce, .middleClick]
             .filter(\.isAvailable)
     }
@@ -159,7 +149,6 @@ struct MouseSettings: View {
         case .smoothScroll: return smoothScrollEnabled
         case .linearScroll: return linearScrollEnabled
         case .scrollSpeed: return scrollSpeedEnabled
-        case .fastScroll: return fastScrollEnabled
         case .mouseAcceleration: return mouseAccelerationDisabled
         case .mouseNavigation: return mouseNavigationEnabled
         case .mouseButtonShortcuts: return mouseButtonShortcutsEnabled || spacesEnabled
@@ -481,102 +470,6 @@ struct MouseSettings: View {
         }
     }
 
-    private var fastScrollText: FastScrollStrings { FeatureStrings.fastScroll(l10n.language) }
-
-    private var fastScrollCard: some View {
-        SettingsCard {
-            SettingsRow(symbol: AppFeature.fastScroll.symbolName, title: fastScrollText.title,
-                        caption: fastScrollText.caption) {
-                Toggle(fastScrollText.title, isOn: $fastScrollEnabled)
-                    .labelsHidden()
-                    .onChange(of: fastScrollEnabled) { _, enabled in
-                        syncFastScroll()
-                        if enabled { permissions.requestAccessibility() }
-                    }
-            }
-            if fastScrollEnabled {
-                VStack(alignment: .leading, spacing: 10) {
-                    Text(fastScrollText.modifierLabel)
-                        .font(.subheadline.weight(.medium))
-                    HStack(spacing: 8) {
-                        ForEach(FastScrollModifier.allCases) { modifier in
-                            fastScrollKeyChip(modifier)
-                        }
-                    }
-                    if fastScrollConflicts {
-                        Label(fastScrollText.conflictNote, systemImage: "exclamationmark.triangle.fill")
-                            .font(.caption)
-                            .foregroundStyle(.orange)
-                            .fixedSize(horizontal: false, vertical: true)
-                    }
-                    sliderRow(fastScrollText.multiplierLabel,
-                              value: fastScrollMultiplierBinding,
-                              range: Double(FastScrollPreferences.multiplierRange.lowerBound)
-                                  ... Double(FastScrollPreferences.multiplierRange.upperBound),
-                              step: 1,
-                              readout: "\(FastScrollPreferences.sanitizedMultiplier(fastScrollMultiplier))×")
-                    HStack(spacing: 16) {
-                        Text(fastScrollText.devicesLabel)
-                            .foregroundStyle(.secondary)
-                        Toggle(fastScrollText.mouseToggle, isOn: $fastScrollMouse)
-                            .toggleStyle(.checkbox)
-                            .onChange(of: fastScrollMouse) { _, _ in syncFastScroll() }
-                        Toggle(fastScrollText.trackpadToggle, isOn: $fastScrollTrackpad)
-                            .toggleStyle(.checkbox)
-                            .onChange(of: fastScrollTrackpad) { _, _ in syncFastScroll() }
-                    }
-                }
-                .padding(.leading, settingsRowTextInset)
-            }
-        }
-    }
-
-    private func fastScrollKeyChip(_ modifier: FastScrollModifier) -> some View {
-        let selected = FastScrollModifier.sanitized(fastScrollModifier) == modifier
-        return Button {
-            fastScrollModifier = modifier.rawValue
-        } label: {
-            HStack(spacing: 6) {
-                Text(modifier.glyph)
-                    .font(.system(size: 13, weight: .semibold, design: .rounded))
-                Text(fastScrollText.name(modifier))
-                    .font(.system(size: 11, weight: .medium))
-            }
-            .foregroundStyle(selected ? Color.accentColor : .primary)
-            .padding(.horizontal, 10)
-            .frame(height: 28)
-            .background(selected ? Color.accentColor.opacity(0.12) : Color.primary.opacity(0.06),
-                        in: RoundedRectangle(cornerRadius: 7, style: .continuous))
-            .overlay {
-                RoundedRectangle(cornerRadius: 7, style: .continuous)
-                    .strokeBorder(selected ? Color.accentColor.opacity(0.7) : Color.primary.opacity(0.14),
-                                  lineWidth: 1)
-            }
-            .contentShape(RoundedRectangle(cornerRadius: 7, style: .continuous))
-        }
-        .buttonStyle(.plain)
-        .accessibilityLabel(fastScrollText.name(modifier))
-        .accessibilityAddTraits(selected ? .isSelected : [])
-    }
-
-    private var fastScrollConflicts: Bool {
-        let direction = ScrollDirectionPreferences()
-        return FastScrollSupport.conflictingModifiers(FastScrollPreferences(), horizontal: direction.horizontalModifier,
-                                                      zoom: direction.zoom.pinchZoom)
-    }
-
-    private var fastScrollMultiplierBinding: Binding<Double> {
-        Binding(
-            get: { Double(FastScrollPreferences.sanitizedMultiplier(fastScrollMultiplier)) },
-            set: { fastScrollMultiplier = Int($0) }
-        )
-    }
-
-    private func syncFastScroll() {
-        ScrollInverter.shared.syncWithPreferences()
-        SmoothScrollService.shared.syncWithPreferences()
-    }
-
     private func sliderRow(_ title: String, value: Binding<Double>, range: ClosedRange<Double>,
                            step: Double, readout: String) -> some View {
         HStack(spacing: 12) {
@@ -747,7 +640,6 @@ struct MouseSettings: View {
             || (smoothScrollEnabled && AppFeature.smoothScroll.isAvailable)
             || (linearScrollEnabled && AppFeature.linearScroll.isAvailable)
             || (scrollSpeedEnabled && AppFeature.scrollSpeed.isAvailable)
-            || (fastScrollEnabled && AppFeature.fastScroll.isAvailable)
             || (mouseNavigationEnabled && AppFeature.mouseNavigation.isAvailable)
             || ((mouseButtonShortcutsEnabled || spacesEnabled)
                 && AppFeature.mouseButtonShortcuts.isAvailable)

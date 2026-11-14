@@ -85,7 +85,6 @@ enum ReleaseChangeAliases {
         case .trackpadEdges: return ["trackpad edges", "trackpad edge", "edge controls", "edge gestures"]
         case .trackpadGestures: return ["trackpad gestures", "app switching swipe", "swipe to switch apps",
             "edge auto-scroll", "edge scrolling", "keep scrolling at the edge"]
-        case .fastScroll: return ["fast scroll", "fast scrolling", "scroll boost", "faster scrolling"]
         case .mouseClickDebounce: return ["extra click filter", "extra-click filter", "click filter",
             "mouse debounce", "keyboard and mouse debounce", "worn-button click filtering", "extra clicks"]
         case .keyboardDebounce: return ["keyboard debounce", "key debounce", "debounce",
@@ -186,7 +185,7 @@ enum ReleaseChangeAliases {
     }
 
     private static let mousePage: [AppFeature] = [.scrollInverter, .scrollHorizontal, .focusFollowsMouse,
-        .smoothScroll, .linearScroll, .scrollSpeed, .fastScroll, .mouseAcceleration, .mouseNavigation, .mouseButtonShortcuts, .middleClick,
+        .smoothScroll, .linearScroll, .scrollSpeed, .mouseAcceleration, .mouseNavigation, .mouseButtonShortcuts, .middleClick,
         .mouseClickDebounce]
     private static let monitorMetrics: [AppFeature] = [.monitorCPU, .monitorGPU, .monitorMemory, .monitorNetwork,
         .monitorDisk, .monitorPower]

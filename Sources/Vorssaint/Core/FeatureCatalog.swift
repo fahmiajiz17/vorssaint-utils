@@ -16,7 +16,7 @@ enum AppFeature: String, CaseIterable {
     // Windows and Dock
     case switcher, dockPreview, dockClick, windowMaximizer, windowLayout, autoQuit, spacesOrder
     // Mouse and keyboard
-    case scrollInverter, scrollHorizontal, scrollZoom, focusFollowsMouse, smoothScroll, linearScroll, scrollSpeed, fastScroll, mouseAcceleration, mouseNavigation, mouseButtonShortcuts, middleClick,
+    case scrollInverter, scrollHorizontal, scrollZoom, focusFollowsMouse, smoothScroll, linearScroll, scrollSpeed, mouseAcceleration, mouseNavigation, mouseButtonShortcuts, middleClick,
          trackpadEdges, trackpadGestures, mouseClickDebounce, keyboardDebounce, textSnippets, superKey, quitWindowProtection
     // Clipboard and files
     case clipboardHistory, pastePlain, finderCutPaste, finderRename, shelf, urlCleaner,
@@ -103,7 +103,7 @@ extension AppFeature {
         switch self {
         case .switcher, .dockPreview, .dockClick, .windowMaximizer, .windowLayout, .autoQuit, .spacesOrder:
             return .windowsDock
-        case .scrollInverter, .scrollHorizontal, .scrollZoom, .focusFollowsMouse, .smoothScroll, .linearScroll, .scrollSpeed, .fastScroll, .mouseAcceleration, .mouseNavigation, .mouseButtonShortcuts, .middleClick,
+        case .scrollInverter, .scrollHorizontal, .scrollZoom, .focusFollowsMouse, .smoothScroll, .linearScroll, .scrollSpeed, .mouseAcceleration, .mouseNavigation, .mouseButtonShortcuts, .middleClick,
              .trackpadEdges, .trackpadGestures, .keyboardDebounce, .textSnippets, .superKey, .quitWindowProtection, .mouseClickDebounce:
             return .mouseKeyboard
         case .clipboardHistory, .pastePlain, .finderCutPaste, .finderRename, .shelf, .urlCleaner,
@@ -143,7 +143,6 @@ extension AppFeature {
         case .smoothScroll: return "cursorarrow.motionlines"
         case .linearScroll: return "arrow.up.and.down.text.horizontal"
         case .scrollSpeed: return "gauge.with.dots.needle.67percent"
-        case .fastScroll: return "hare"
         case .mouseAcceleration: return "cursorarrow.rays"
         case .mouseNavigation: return "arrow.left.arrow.right"
         case .mouseButtonShortcuts: return "button.programmable"
@@ -254,7 +253,6 @@ extension AppFeature {
         case .smoothScroll: return [DefaultsKey.smoothScrollEnabled]
         case .linearScroll: return [DefaultsKey.linearScrollEnabled]
         case .scrollSpeed: return [DefaultsKey.scrollSpeedEnabled]
-        case .fastScroll: return [DefaultsKey.fastScrollEnabled]
         case .mouseAcceleration: return [DefaultsKey.mouseAccelerationDisabled]
         case .mouseNavigation: return [DefaultsKey.mouseNavigationEnabled]
         case .mouseButtonShortcuts: return [DefaultsKey.mouseButtonShortcutsEnabled,
@@ -360,7 +358,7 @@ extension AppFeature {
         case .notch: return [.accessibility, .automationPlayback]
         case .mouseAcceleration, .spacesOrder:
             return []
-        case .scrollInverter, .scrollHorizontal, .scrollZoom, .focusFollowsMouse, .smoothScroll, .linearScroll, .scrollSpeed, .fastScroll, .mouseNavigation, .mouseButtonShortcuts, .middleClick,
+        case .scrollInverter, .scrollHorizontal, .scrollZoom, .focusFollowsMouse, .smoothScroll, .linearScroll, .scrollSpeed, .mouseNavigation, .mouseButtonShortcuts, .middleClick,
              .trackpadEdges, .trackpadGestures, .keyboardDebounce, .textSnippets, .superKey, .mouseClickDebounce,
              .dockClick, .windowMaximizer, .windowLayout,
              .autoQuit, .quitWindowProtection, .cleaningMode, .pastePlain, .radialMenu,
@@ -496,7 +494,7 @@ extension AppFeature {
              .monitorCPU, .monitorGPU, .monitorMemory, .monitorNetwork, .monitorDisk, .monitorPower,
              .connectedDevices:
             return true
-        case .focusFollowsMouse, .scrollHorizontal, .scrollZoom, .linearScroll, .scrollSpeed, .fastScroll, .diskImageInstaller, .audioPriority,
+        case .focusFollowsMouse, .scrollHorizontal, .scrollZoom, .linearScroll, .scrollSpeed, .diskImageInstaller, .audioPriority,
              .trackpadEdges, .trackpadGestures, .wallpaper, .killProcess, .portManager, .fanControl, .notchMascot, .spacesOrder, .quitApps:
             return false
         }

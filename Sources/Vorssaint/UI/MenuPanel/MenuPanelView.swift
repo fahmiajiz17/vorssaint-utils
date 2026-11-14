@@ -1114,7 +1114,7 @@ struct UtilitiesSection: View {
 private enum ControlPanelItem: String, PanelOrderItem, Identifiable {
     case mouseScroll, smoothScroll, linearScroll, focusFollowsMouse, mouseAcceleration, mouseNavigation, switcher, cutPaste, autoQuit, shelf, windowMaximize, dockPreview, keyDebounce,
          dockClick, dockClickHide, dockClickCycle, middleClick, textSnippets, radialMenu, mouseButtonShortcuts, superKey,
-         mouseClickDebounce, notch, spacesOrder, trackpadEdges, trackpadGestures, fastScroll
+         mouseClickDebounce, notch, spacesOrder, trackpadEdges, trackpadGestures
 
     var id: String { rawValue }
 
@@ -1146,7 +1146,6 @@ private enum ControlPanelItem: String, PanelOrderItem, Identifiable {
         case .mouseClickDebounce: return .mouseClickDebounce
         case .trackpadEdges: return .trackpadEdges
         case .trackpadGestures: return .trackpadGestures
-        case .fastScroll: return .fastScroll
         }
     }
 }
@@ -1164,7 +1163,7 @@ private enum ControlCategory: String, CaseIterable, Identifiable {
              .spacesOrder:
             return .windows
         case .mouseScroll, .smoothScroll, .linearScroll, .focusFollowsMouse, .mouseAcceleration, .mouseNavigation, .mouseButtonShortcuts, .middleClick, .keyDebounce,
-             .textSnippets, .radialMenu, .superKey, .mouseClickDebounce, .trackpadEdges, .trackpadGestures, .fastScroll:
+             .textSnippets, .radialMenu, .superKey, .mouseClickDebounce, .trackpadEdges, .trackpadGestures:
             return .inputDevices
         case .cutPaste, .shelf:
             return .files
@@ -1217,8 +1216,6 @@ struct QuickControlsSection: View {
     @AppStorage(DefaultsKey.trackpadEdgesEnabled) private var trackpadEdgesEnabled = false
     @AppStorage(DefaultsKey.trackpadAppSwipeEnabled) private var trackpadAppSwipeEnabled = false
     @AppStorage(DefaultsKey.trackpadEdgeScrollEnabled) private var trackpadEdgeScrollEnabled = false
-    @AppStorage(DefaultsKey.fastScrollEnabled) private var fastScrollEnabled = false
-    @AppStorage(DefaultsKey.fastScrollModifier) private var fastScrollModifier = FastScrollModifier.option.rawValue
     @AppStorage(DefaultsKey.mouseAccelerationDisabled) private var mouseAccelerationDisabled = false
     @AppStorage(DefaultsKey.linearScrollEnabled) private var linearScrollEnabled = false
     @AppStorage(DefaultsKey.smoothScrollEnabled) private var smoothScrollEnabled = false
@@ -1250,7 +1247,6 @@ struct QuickControlsSection: View {
     @AppStorage(DefaultsKey.panelControlSuperKey) private var showSuperKey = true
     @AppStorage(DefaultsKey.panelControlTrackpadEdges) private var showTrackpadEdges = true
     @AppStorage(DefaultsKey.panelControlTrackpadGestures) private var showTrackpadGestures = true
-    @AppStorage(DefaultsKey.panelControlFastScroll) private var showFastScroll = true
     @AppStorage(DefaultsKey.panelControlMouseAcceleration) private var showMouseAcceleration = true
     @AppStorage(DefaultsKey.panelControlMouseClickDebounce) private var showMouseClickDebounce = true
     @AppStorage(DefaultsKey.panelControlWindowsExpanded) private var windowsExpanded = false
@@ -1378,7 +1374,6 @@ struct QuickControlsSection: View {
         case .superKey: return superKeyEnabled
         case .trackpadEdges: return trackpadEdgesEnabled
         case .trackpadGestures: return trackpadAppSwipeEnabled || trackpadEdgeScrollEnabled
-        case .fastScroll: return fastScrollEnabled
         case .mouseClickDebounce: return mouseClickDebounceEnabled
         }
     }
@@ -1462,7 +1457,6 @@ struct QuickControlsSection: View {
         case .superKey: return showSuperKey
         case .trackpadEdges: return showTrackpadEdges
         case .trackpadGestures: return showTrackpadGestures
-        case .fastScroll: return showFastScroll
         case .mouseClickDebounce: return showMouseClickDebounce
         }
     }
@@ -1918,23 +1912,6 @@ struct QuickControlsSection: View {
                                SettingsRouter.shared.page = .trackpadGestures
                                appDelegate()?.openSettingsWindow()
                            })
-        case .fastScroll:
-            let fastStrings = FeatureStrings.fastScroll(l10n.language)
-            PanelToggleRow(title: fastStrings.title,
-                           caption: caption(fastStrings.panelCaption(FastScrollModifier.sanitized(fastScrollModifier)),
-                                            needsAccessibility: fastScrollEnabled),
-                           systemImage: AppFeature.fastScroll.symbolName,
-                           isOn: $fastScrollEnabled,
-                           isEditing: editing,
-                           showsDragHandle: true,
-                           visibility: $showFastScroll,
-                           needsAttention: fastScrollEnabled && !permissions.accessibility,
-                           permissionButtonTitle: l10n.s.permissionRequest,
-                           permissionAction: accessibilityPermissionAction(fastScrollEnabled))
-                .onChange(of: fastScrollEnabled) { _, enabled in
-                    ScrollInverter.shared.syncWithPreferences()
-                    requestAccessibilityIfNeeded(enabled)
-                }
         case .mouseAcceleration:
             PanelToggleRow(title: l10n.s.mouseAccelerationName,
                            caption: l10n.s.mouseAccelerationCaption,
@@ -2041,7 +2018,6 @@ struct QuickControlsSection: View {
         showSuperKey = true
         showTrackpadEdges = true
         showTrackpadGestures = true
-        showFastScroll = true
         showMouseAcceleration = true
         showLinearScroll = true
         showSmoothScroll = true

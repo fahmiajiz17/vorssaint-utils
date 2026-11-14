@@ -264,10 +264,6 @@ final class FeatureRuntime: ObservableObject {
         .middleClick: { MiddleClickService.shared.syncWithPreferences() },
         .trackpadEdges: { TrackpadEdgeService.shared.syncWithPreferences() },
         .trackpadGestures: { TrackpadGestureService.shared.syncWithPreferences() },
-        .fastScroll: {
-            ScrollInverter.shared.syncWithPreferences()
-            SmoothScrollService.shared.syncWithPreferences()
-        },
         .mouseClickDebounce: { MouseClickDebounceService.shared.syncWithPreferences() },
         .keyboardDebounce: { KeyboardDebounceService.shared.syncWithPreferences() },
         .quitWindowProtection: { QuitProtectionService.shared.syncWithPreferences() },

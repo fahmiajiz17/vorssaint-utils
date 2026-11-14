@@ -419,10 +419,7 @@ final class SmoothScrollService: ObservableObject {
             carryVertical = 0
             carryHorizontal = 0
         }
-        let fastScroll = FastScrollPreferences(defaults: defaults)
-        let fastScrollBoost = speedKey == nil ? fastScroll.factor(flags: glideFlags, isMouseWheel: true) : nil
-        if fastScrollBoost != nil { glideFlags.remove(fastScroll.modifier.flag) }
-        let speedScale = speedKey == nil ? (fastScrollBoost ?? 1) : Double(speed.multiplier)
+        let speedScale = speedKey == nil ? 1.0 : Double(speed.multiplier)
         let verticalDistance = vertical * step * speedScale
         let horizontalDistance = horizontal * step * speedScale
         carryVertical = SmoothScrollSupport.carry(carryVertical, continuing: verticalDistance)

@@ -386,12 +386,12 @@ enum FeatureCatalogTests {
 
         // MARK: Features hub catalog
 
-        suite.expect(AppFeature.allCases.count == 83, "feature catalog has 83 features")
+        suite.expect(AppFeature.allCases.count == 82, "feature catalog has 82 features")
         suite.expect(Set(AppFeature.allCases.map(\.rawValue)).count == AppFeature.allCases.count,
                "feature ids are unique")
         suite.expect(AppFeature.allCases.map(\.rawValue) == [
             "switcher", "dockPreview", "dockClick", "windowMaximizer", "windowLayout", "autoQuit", "spacesOrder",
-            "scrollInverter", "scrollHorizontal", "scrollZoom", "focusFollowsMouse", "smoothScroll", "linearScroll", "scrollSpeed", "fastScroll", "mouseAcceleration", "mouseNavigation", "mouseButtonShortcuts", "middleClick",
+            "scrollInverter", "scrollHorizontal", "scrollZoom", "focusFollowsMouse", "smoothScroll", "linearScroll", "scrollSpeed", "mouseAcceleration", "mouseNavigation", "mouseButtonShortcuts", "middleClick",
             "trackpadEdges", "trackpadGestures", "mouseClickDebounce", "keyboardDebounce", "textSnippets", "superKey", "quitWindowProtection",
             "clipboardHistory", "pastePlain", "finderCutPaste", "finderRename", "shelf", "urlCleaner",
             "diskImageInstaller",

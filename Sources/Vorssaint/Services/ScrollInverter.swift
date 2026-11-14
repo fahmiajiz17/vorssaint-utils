@@ -96,8 +96,7 @@ final class ScrollInverter: ObservableObject {
         }
         let speedWanted = Self.scrollSpeedWanted
         if SessionActivitySupport.tapShouldRun(
-            featureWanted: direction.isEnabled || Self.linearScrollWanted || speedWanted
-                || FastScrollPreferences().wantsTap,
+            featureWanted: direction.isEnabled || Self.linearScrollWanted || speedWanted,
             accessibilityGranted: Permissions.shared.accessibility,
             sessionIsActive: SessionActivity.shared.isActive
         ) {
@@ -282,11 +281,7 @@ final class ScrollInverter: ObservableObject {
 
         guard ScrollWheelSupport.isMouseWheel(traits,
                                               secondsSinceLastGesturePhase: secondsSinceGesturePhase)
-        else {
-            FastScrollSupport.boost(event, preferences: FastScrollPreferences(defaults: UserDefaults.standard),
-                                    isMouseWheel: false)
-            return Unmanaged.passUnretained(event)
-        }
+        else { return Unmanaged.passUnretained(event) }
 
         let defaults = UserDefaults.standard
         let direction = ScrollDirectionPreferences(defaults: defaults)
@@ -355,10 +350,6 @@ final class ScrollInverter: ObservableObject {
             // reappear after an excepted app or an off/uninstalled interval.
             linearCarryVertical = 0
             linearCarryHorizontal = 0
-        }
-
-        if speedKey == nil {
-            FastScrollSupport.boost(event, preferences: FastScrollPreferences(defaults: defaults), isMouseWheel: true)
         }
 
         // Linear scrolling already scaled the distance before rounding. A

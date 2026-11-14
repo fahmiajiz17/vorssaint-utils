@@ -91,7 +91,7 @@ extension AppFeature {
     var energyProfile: FeatureEnergyProfile {
         switch self {
         case .scrollInverter, .scrollHorizontal, .scrollZoom, .focusFollowsMouse, .smoothScroll, .linearScroll, .scrollSpeed, .windowMaximizer, .middleClick,
-             .trackpadEdges, .trackpadGestures, .fastScroll, .mouseNavigation, .mouseButtonShortcuts, .mouseClickDebounce,
+             .trackpadEdges, .trackpadGestures, .mouseNavigation, .mouseButtonShortcuts, .mouseClickDebounce,
              .dockPreview, .dockClick, .shelf:
             return .mouse
         case .keyboardDebounce, .finderCutPaste, .finderRename, .quitWindowProtection, .musicBlock:

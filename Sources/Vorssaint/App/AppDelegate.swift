@@ -191,7 +191,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSW
                 FeatureRuntime.shared.sync([
                     .scrollInverter, .scrollHorizontal, .scrollZoom, .scrollSpeed, .focusFollowsMouse, .smoothScroll, .linearScroll, .mouseNavigation, .switcher,
                     .dockPreview, .finderCutPaste, .finderRename, .autoQuit, .dockClick,
-                    .middleClick, .trackpadEdges, .trackpadGestures, .fastScroll, .windowMaximizer, .keyboardDebounce, .windowLayout,
+                    .middleClick, .trackpadEdges, .trackpadGestures, .windowMaximizer, .keyboardDebounce, .windowLayout,
                     .textSnippets, .brightness, .radialMenu, .mouseButtonShortcuts,
                     .mouseClickDebounce, .superKey, .quitWindowProtection, .mixer, .musicBlock, .notch,
                 ])
